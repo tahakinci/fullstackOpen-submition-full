@@ -1,33 +1,66 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Persons } from "./components/Persons";
 import { Filter } from "./components/Filter";
 import { PersonForm } from "./components/PersonForm";
+
+import { getAll, create, erase, update } from "./services/persons";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
 
   useEffect(() => {
-    const URL = "http://localhost:3001/persons";
-    axios.get(URL).then((res) => {
-      const data = res.data;
-      setPersons(data);
+    getAll().then((initialValue) => {
+      setPersons(initialValue);
     });
   }, []);
 
   const addPerson = (e) => {
     e.preventDefault();
+
     const nameArr = persons.map((item) => item.name);
     if (nameArr.includes(newName)) {
-      return alert(`${newName} is already added to phonebook`);
+      if (
+        !confirm(
+          `${newName} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        return;
+      }
+      return updateNumber();
     }
-    setPersons([
-      ...persons,
-      { id: persons.length + 1, name: newName, number: newNumber },
-    ]);
-    setNewName("");
-    setNewNumber("");
+    const personObj = {
+      name: newName,
+      number: newNumber,
+    };
+    create(personObj).then((returnedPerson) => {
+      setPersons([...persons, returnedPerson]);
+      setNewName("");
+      setNewNumber("");
+    });
+  };
+
+  const updateNumber = () => {
+    const person = persons.find((person) => person.name === newName);
+    const changedPerson = { ...person, number: newNumber };
+    console.log(person.id);
+    update(person.id, changedPerson).then((changedNumber) => {
+      setPersons(persons.map((p) => (p.id !== person.id ? p : changedNumber)));
+      setNewName("");
+      setNewNumber("");
+    });
+  };
+
+  const deletePerson = (id) => {
+    if (!confirm("deneme")) {
+      return;
+    }
+    erase(id)
+      .then(() => {
+        const newObj = persons.filter((person) => person.id !== id);
+        setPersons(newObj);
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
@@ -40,11 +73,13 @@ const App = () => {
         addPerson={addPerson}
         setNewName={setNewName}
         setNewNumber={setNewNumber}
+        newName={newName}
+        newNumber={newNumber}
       />
 
       <h3>Numbers</h3>
 
-      <Persons persons={persons} />
+      <Persons persons={persons} deletePerson={deletePerson} />
     </div>
   );
 };

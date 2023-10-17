@@ -1,12 +1,23 @@
-export const PersonForm = ({ addPerson, setNewName, setNewNumber }) => {
+export const PersonForm = ({
+  addPerson,
+  setNewName,
+  setNewNumber,
+  newName = "",
+  newNumber = "",
+}) => {
   return (
     <form onSubmit={addPerson}>
       <div>
-        name: <input onChange={(e) => setNewName(e.target.value)} />
+        name:{" "}
+        <input value={newName} onChange={(e) => setNewName(e.target.value)} />
       </div>
 
       <div>
-        number: <input onChange={(e) => setNewNumber(e.target.value)} />
+        number:{" "}
+        <input
+          value={newNumber}
+          onChange={(e) => setNewNumber(e.target.value)}
+        />
       </div>
       <div>
         <button type="submit">add</button>
