@@ -1,0 +1,14 @@
+.success {
+  background-color: lightgray;
+  color: green;
+  border: 3px solid green;
+  font-size: 1.5rem;
+  padding: 1rem;
+}
+.fail {
+  background-color: lightgray;
+  color: red;
+  border: 3px solid red;
+  font-size: 1.5rem;
+  padding: 1rem;
+}

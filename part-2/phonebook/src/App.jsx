@@ -4,10 +4,12 @@ import { Filter } from "./components/Filter";
 import { PersonForm } from "./components/PersonForm";
 
 import { getAll, create, erase, update } from "./services/persons";
+import { Notification } from "./components/Notification";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     getAll().then((initialValue) => {
@@ -37,6 +39,10 @@ const App = () => {
       setPersons([...persons, returnedPerson]);
       setNewName("");
       setNewNumber("");
+      setMessage(["success", `Added ${returnedPerson.name}`]);
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
     });
   };
 
@@ -60,11 +66,22 @@ const App = () => {
         const newObj = persons.filter((person) => person.id !== id);
         setPersons(newObj);
       })
-      .catch((error) => console.log(error));
+      .catch(() => {
+        setMessage([
+          "fail",
+          `Information of ${
+            persons.find((person) => person.id === id).name
+          } has already been removed from server`,
+        ]);
+        setTimeout(() => {
+          setMessage(null);
+        }, 5000);
+      });
   };
 
   return (
     <div>
+      <Notification message={message} />
       <h2>Phonebook</h2>
       <Filter persons={persons} />
 
