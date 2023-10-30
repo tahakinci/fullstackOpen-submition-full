@@ -3,6 +3,14 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
+// const getTokenFrom = (request) => {
+//   const authorization = request.get("authorization");
+//   if (authorization && authorization.startsWith("Bearer ")) {
+//     return authorization.replace("Bearer ", "");
+//   }
+//   return null;
+// };
+
 blogsRouter.get("/", async (req, res, next) => {
   try {
     const blogs = await Blog.find({}).populate("user", {
@@ -18,7 +26,7 @@ blogsRouter.get("/", async (req, res, next) => {
 blogsRouter.post("/", async (req, res, next) => {
   const body = req.body;
   const decodedToken = jwt.verify(req.token, process.env.SECRET);
-  if (!(decodedToken.id || req.token)) {
+  if (!decodedToken.id) {
     return res.status(401).json({ error: "token invalid" });
   }
   const user = await User.findById(decodedToken.id);
@@ -28,7 +36,7 @@ blogsRouter.post("/", async (req, res, next) => {
       author: body.author,
       url: body.url,
       likes: body.likes,
-      users: user.id,
+      user: user.id,
     });
     if (!blog.likes) {
       blog.likes = 0;
@@ -47,7 +55,12 @@ blogsRouter.post("/", async (req, res, next) => {
 
 blogsRouter.delete("/:id", async (req, res, next) => {
   const { id } = req.params;
+  const blog = await Blog.findById(id);
+  const user = req.user;
   try {
+    if (!(blog.user.toString() === user.id.toString())) {
+      return res.status(401).json({ error: "invalid token" });
+    }
     await Blog.findByIdAndRemove(id);
     res.status(204).end();
   } catch (error) {
@@ -58,7 +71,12 @@ blogsRouter.delete("/:id", async (req, res, next) => {
 blogsRouter.put("/:id", async (req, res, next) => {
   const { title, author, url, likes } = req.body;
   const { id } = req.params;
+  const blog = await Blog.findById(id);
+  const user = req.user;
   try {
+    if (!(blog.user.toString() === user.id.toString())) {
+      return res.status(401).json({ error: "invalid token" });
+    }
     const updatedBlog = await Blog.findByIdAndUpdate(
       id,
       {
