@@ -3,14 +3,6 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 const jwt = require("jsonwebtoken");
 
-// const getTokenFrom = (request) => {
-//   const authorization = request.get("authorization");
-//   if (authorization && authorization.startsWith("Bearer ")) {
-//     return authorization.replace("Bearer ", "");
-//   }
-//   return null;
-// };
-
 blogsRouter.get("/", async (req, res, next) => {
   try {
     const blogs = await Blog.find({}).populate("user", {
@@ -20,6 +12,15 @@ blogsRouter.get("/", async (req, res, next) => {
     res.json(blogs);
   } catch (error) {
     next(error);
+  }
+});
+
+blogsRouter.get("/:id", async (request, response) => {
+  const note = await Blog.findById(request.params.id);
+  if (note) {
+    response.json(note);
+  } else {
+    response.status(404).end();
   }
 });
 
