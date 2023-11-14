@@ -1,10 +1,10 @@
 import { useState } from "react";
 
-export const Blog = ({ blog, handleLikes, handleDelete }) => {
+export const Blog = ({ blog, handleLikes, handleDelete, user }) => {
   const [display, setDisplay] = useState(false);
-
+  const activeUser = localStorage.getItem("loggedBlogappUser");
   return (
-    <div className="border">
+    <div className="blog-container">
       <p>
         {blog.title} {blog.author}
         <button onClick={() => setDisplay(!display)}>
@@ -14,13 +14,18 @@ export const Blog = ({ blog, handleLikes, handleDelete }) => {
       {display ? (
         <div className="toggle-content">
           <a href={blog.url}>{blog.url}</a>
-          <p>
-            {blog.likes}{" "}
+          <div>
+            <span className="like-amount">{blog.likes} </span>
             <button onClick={() => handleLikes(blog.id)}>like</button>
-          </p>
+          </div>
         </div>
       ) : null}
-      <button onClick={() => handleDelete(blog.id)}>delete</button>
+      <button
+        className={activeUser.includes(user.name) ? "" : "hidden"}
+        onClick={() => handleDelete(blog.id)}
+      >
+        delete
+      </button>
     </div>
   );
 };

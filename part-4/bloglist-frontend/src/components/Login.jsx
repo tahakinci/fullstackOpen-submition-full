@@ -25,12 +25,14 @@ export const Login = ({
         value={password}
         onChange={handlePasswordChange}
       />
-      <button type="submit">login</button>
+      <button type="submit" id="login-button">
+        login
+      </button>
     </form>
   );
 };
 
-Login.PropTypes = {
+Login.propTypes = {
   handleLogin: PropTypes.func.isRequired,
   handleUsernameChange: PropTypes.func.isRequired,
   handlePasswordChange: PropTypes.func.isRequired,

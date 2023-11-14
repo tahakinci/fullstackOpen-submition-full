@@ -29,6 +29,16 @@ const App = () => {
     }
   }, []);
 
+  // useEffect(() => {
+  //   function compareByLikes(a, b) {
+  //     if (a.likes > b.likes) return 1;
+  //     else if (a.likes < b.likes) -1;
+  //     return 0;
+  //   }
+
+  //   setBlogs(blogs.sort(compareByLikes));
+  // }, [blogs]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -47,7 +57,6 @@ const App = () => {
         setNotification(null);
       }, 5000);
     } catch (error) {
-      console.log(error);
       setNotification(["error", "Wrong username or password"]);
       setTimeout(() => {
         setNotification(null);
@@ -143,6 +152,7 @@ const App = () => {
             <Blog
               key={blog.id}
               blog={blog}
+              user={blog.user}
               handleDelete={handleDelete}
               handleLikes={handleLikes}
             />

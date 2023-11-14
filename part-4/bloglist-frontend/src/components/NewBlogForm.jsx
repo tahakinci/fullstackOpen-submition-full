@@ -18,7 +18,9 @@ export const NewBlogForm = ({ createBlog }) => {
       <input type="text" id="form-author" name="form-author" />
       <label htmlFor="form-url">Url</label>
       <input type="text" id="form-url" name="form-url" />
-      <button type="submit">create</button>
+      <button type="submit" id="create-button">
+        create
+      </button>
     </form>
   );
 };
